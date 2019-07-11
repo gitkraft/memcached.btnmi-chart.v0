@@ -54,6 +54,8 @@ The following tables lists the configurable parameters of the Memcached chart an
 | `image.tag`                 | Memcached Image tag                 | `{TAG_NAME}`                                              |
 | `image.pullPolicy`          | Memcached image pull policy         | `IfNotPresent`                                            |
 | `image.pullSecrets`         | Specify docker-registry secret names as an array          | `[]` (does not add image pull secrets to deployed pods)  |
+| `nameOverride`              | String to partially override memcached.fullname template with a string (will prepend the release name) | `nil`       |
+| `fullnameOverride`          | String to fully override memcached.fullname template with a string                                     | `nil`       |
 | `securityContext.enabled`   | Enable security context             | `true`                                                    |
 | `securityContext.fsGroup`   | Group ID for the container          | `1001`                                                    |
 | `securityContext.runAsUser` | User ID for the container           | `1001`                                                    |
@@ -61,6 +63,7 @@ The following tables lists the configurable parameters of the Memcached chart an
 | `memcachedPassword`         | Memcached admin password            | `nil`                                                     |
 | `serviceType`               | Kubernetes Service type             | `ClusterIP`                                               |
 | `resources`                 | CPU/Memory resource requests/limits | Memory: `256Mi`, CPU: `250m`                              |
+| `clusterDomain`                    | Kubernetes cluster domain           | `cluster.local`                                           |
 | `metrics.enabled`                          | Start a side-car prometheus exporter                                                                           | `false`                                              |
 | `metrics.image.registry`                   | MongoDB exporter image registry                                                                                  | `docker.io`                                          |
 | `metrics.image.repository`                 | MongoDB exporter image name                                                                                      | `prom/memcached-exporter`                           |
