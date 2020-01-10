@@ -40,8 +40,7 @@ spec:
         - name: memcached
           image: {{ template "memcached.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          command:
-{{ toYaml .Values.command | indent 12 }}
+          args: {{- toYaml .Values.arguments | nindent 12 }}
           env:
             - name: MEMCACHED_USERNAME
               value: {{ default "" .Values.memcachedUsername | quote }}
@@ -50,6 +49,9 @@ spec:
                 secretKeyRef:
                   name: {{ template "memcached.fullname" . }}
                   key: memcached-password
+            {{- if .Values.extraEnv }}
+            {{- toYaml .Values.extraEnv | nindent 12 }}
+            {{- end }}
           ports:
             - name: memcache
               containerPort: 11211
@@ -67,6 +69,13 @@ spec:
             periodSeconds: 5
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
           {{- end }}
         {{- if .Values.metrics.enabled }}
         - name: metrics
@@ -91,4 +100,7 @@ spec:
           resources: {{- toYaml .Values.metrics.resources | nindent 12 }}
           {{- end }}
         {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
 {{- end }}
