@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels: {{- include "memcached.matchLabels" . | nindent 6 }}
   replicas: {{ .Values.replicaCount }}
+  serviceName: {{ template "memcached.fullname" . }}
   template:
     metadata:
       labels: {{- include "memcached.labels" . | nindent 8 }}
@@ -38,13 +39,18 @@ spec:
       {{- end }}
       containers:
         - name: memcached
+          {{- if .Values.persistence.enabled }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "/usr/bin/pkill -10 memcached ; sleep 60s"]
+          {{- end }}
           image: {{ template "memcached.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          command:
-{{ toYaml .Values.command | indent 12 }}
-{{- if .Values.persistence.enabled }}
-            - -e /cache-state/memory_file
-{{- end }}
+          args: {{- toYaml .Values.arguments | nindent 12 }}
+          {{- if .Values.persistence.enabled }}
+            - -e/cache-state/memory_file
+          {{- end }}
           env:
             - name: MEMCACHED_USERNAME
               value: {{ default "" .Values.memcachedUsername | quote }}
@@ -53,6 +59,9 @@ spec:
                 secretKeyRef:
                   name: {{ template "memcached.fullname" . }}
                   key: memcached-password
+            {{- if .Values.extraEnv }}
+            {{- toYaml .Values.extraEnv | nindent 12 }}
+            {{- end }}
           ports:
             - name: memcache
               containerPort: 11211
@@ -70,6 +79,17 @@ spec:
             periodSeconds: 5
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
+          {{- end }}
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /cache-state
+            - name: tmp
+              mountPath: /tmp
           {{- end }}
         {{- if .Values.metrics.enabled }}
         - name: metrics
@@ -93,20 +113,28 @@ spec:
           {{- if .Values.metrics.resources }}
           resources: {{- toYaml .Values.metrics.resources | nindent 12 }}
           {{- end }}
-          volumeMounts:
-            - name: pv-data
-              mountPath: /cache-state
         {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
 {{- if .Values.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
-        name: pv-data
+        name: data
+      {{- with .Values.persistence.annotations }}
+        annotations:
+        {{- range $key, $value := . }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+      {{- end }}
       spec:
         accessModes:
-          - ReadWriteOnce
-        storageClassName: {{ .Values.persistence.storageClassName }}
+        {{- range .Values.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
         resources:
           requests:
-            storage: {{ .Values.persistence.requests.storage }}
+            storage: {{ .Values.persistence.size | quote }}
+        {{ include "memcached.storageClass" . | nindent 8 }}
 {{- end }}
 {{- end }}
