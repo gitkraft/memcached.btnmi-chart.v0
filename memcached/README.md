@@ -72,7 +72,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------- |
 | `image.registry`                              | Memcached image registry                                                                        | `docker.io`                  |
 | `image.repository`                            | Memcached image repository                                                                      | `bitnami/memcached`          |
-| `image.tag`                                   | Memcached image tag (immutable tags are recommended)                                            | `1.6.10-debian-10-r0`        |
+| `image.tag`                                   | Memcached image tag (immutable tags are recommended)                                            | `1.6.10-debian-10-r30`       |
 | `image.pullPolicy`                            | Memcached image pull policy                                                                     | `IfNotPresent`               |
 | `image.pullSecrets`                           | Specify docker-registry secret names as an array                                                | `[]`                         |
 | `image.debug`                                 | Enable image debug mode                                                                         | `false`                      |
@@ -129,13 +129,25 @@ The command removes all the Kubernetes components associated with the chart and 
 | `metrics.enabled`                             | Start a side-car prometheus exporter                                                            | `false`                      |
 | `metrics.image.registry`                      | Memcached exporter image registry                                                               | `docker.io`                  |
 | `metrics.image.repository`                    | Memcached exporter image repository                                                             | `bitnami/memcached-exporter` |
-| `metrics.image.tag`                           | Memcached exporter image tag (immutable tags are recommended)                                   | `0.9.0-debian-10-r107`       |
+| `metrics.image.tag`                           | Memcached exporter image tag (immutable tags are recommended)                                   | `0.9.0-debian-10-r137`       |
 | `metrics.image.pullPolicy`                    | Image pull policy                                                                               | `IfNotPresent`               |
 | `metrics.image.pullSecrets`                   | Specify docker-registry secret names as an array                                                | `[]`                         |
 | `metrics.podAnnotations`                      | Metrics exporter pod Annotation and Labels                                                      | `{}`                         |
 | `metrics.portName`                            | Memcached exporter port name                                                                    | `metrics`                    |
 | `metrics.resources.limits`                    | The resources limits for the container                                                          | `{}`                         |
 | `metrics.resources.requests`                  | The requested resources for the container                                                       | `{}`                         |
+| `metrics.livenessProbe.enabled`               | Enable livenessProbe                                                                            | `true`                       |
+| `metrics.livenessProbe.initialDelaySeconds`   | Initial delay seconds for livenessProbe                                                         | `15`                         |
+| `metrics.livenessProbe.periodSeconds`         | Period seconds for livenessProbe                                                                | `10`                         |
+| `metrics.livenessProbe.timeoutSeconds`        | Timeout seconds for livenessProbe                                                               | `5`                          |
+| `metrics.livenessProbe.failureThreshold`      | Failure threshold for livenessProbe                                                             | `3`                          |
+| `metrics.livenessProbe.successThreshold`      | Success threshold for livenessProbe                                                             | `1`                          |
+| `metrics.readinessProbe.enabled`              | Enable readinessProbe                                                                           | `true`                       |
+| `metrics.readinessProbe.initialDelaySeconds`  | Initial delay seconds for readinessProbe                                                        | `5`                          |
+| `metrics.readinessProbe.periodSeconds`        | Period seconds for readinessProbe                                                               | `10`                         |
+| `metrics.readinessProbe.timeoutSeconds`       | Timeout seconds for readinessProbe                                                              | `1`                          |
+| `metrics.readinessProbe.failureThreshold`     | Failure threshold for readinessProbe                                                            | `3`                          |
+| `metrics.readinessProbe.successThreshold`     | Success threshold for readinessProbe                                                            | `1`                          |
 | `metrics.service.type`                        | Kubernetes service type for Prometheus metrics                                                  | `ClusterIP`                  |
 | `metrics.service.port`                        | Prometheus metrics service port                                                                 | `9150`                       |
 | `metrics.service.annotations`                 | Annotations for the Prometheus metrics service                                                  | `{}`                         |
@@ -148,7 +160,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `metrics.serviceMonitor.relabelings`          | Metrics relabelings to add to the scrape endpoint, applied before scraping                      | `[]`                         |
 | `volumePermissions.image.registry`            | Init container volume-permissions image registry                                                | `docker.io`                  |
 | `volumePermissions.image.repository`          | Init container volume-permissions image repository                                              | `bitnami/bitnami-shell`      |
-| `volumePermissions.image.tag`                 | Init container volume-permissions image tag (immutable tags are recommended)                    | `10-debian-10-r143`          |
+| `volumePermissions.image.tag`                 | Init container volume-permissions image tag (immutable tags are recommended)                    | `10-debian-10-r172`          |
 | `volumePermissions.image.pullPolicy`          | Init container volume-permissions image pull policy                                             | `Always`                     |
 | `volumePermissions.image.pullSecrets`         | Specify docker-registry secret names as an array                                                | `[]`                         |
 | `volumePermissions.resources.limits`          | Init container volume-permissions resource limits                                               | `{}`                         |
